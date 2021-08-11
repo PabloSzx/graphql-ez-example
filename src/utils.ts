@@ -1,27 +1,22 @@
 import jwt from 'jsonwebtoken';
+
 const APP_SECRET = 'GraphQL-is-aw3some';
 
-function getTokenPayload(token) {
-  return jwt.verify(token, APP_SECRET);
-}
+function getUserId(authToken: string): number | null {
+  try {
+    const payload = jwt.verify(authToken, APP_SECRET);
 
-function getUserId(req, authToken?:string) {
-  if (req) {
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      if (!token) {
-        throw new Error('No token found');
-      }
-      const { userId } = getTokenPayload(token);
-      return userId;
-    }
-  } else if (authToken) {
-    const { userId } = getTokenPayload(authToken);
-    return userId;
-  }
+    if (typeof payload === 'string') return null;
 
-  throw new Error('Not authenticated');
+    const userId = payload.userId;
+
+    if (typeof userId !== 'number') return userId;
+  } catch (err) {}
+
+  return null;
 }
 
 export { APP_SECRET, getUserId };
+
+export const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));

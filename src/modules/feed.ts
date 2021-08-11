@@ -1,6 +1,6 @@
-import { gql } from '@graphql-ez/plugin-schema';
+import { registerResolvers, registerTypeDefs, gql } from '../app';
 
-export const typeDefs = gql`
+registerTypeDefs(gql`
   type Feed {
     id: ID!
     links: [Link!]!
@@ -19,40 +19,36 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    feed(
-      filter: String
-      skip: Int
-      take: Int
-      orderBy: LinkOrderByInput
-    ): Feed!
-  }`;
+    feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
+  }
+`);
 
-export const resolvers = {
-    Query: {
-      async feed (parent, args, context, info) {
-        const where = args.filter
-          ? {
-              OR: [
-                { description: { contains: args.filter } },
-                { url: { contains: args.filter } }
-              ]
-            }
-          : {};
-      
-        const links = await context.prisma.link.findMany({
-          where,
-          skip: args.skip,
-          take: args.take,
-          orderBy: args.orderBy
-        });
-      
-        const count = await context.prisma.link.count({ where });
-      
-        return {
-          id: 'main-feed',
-          links,
-          count
-        };
-      },
+registerResolvers({
+  Query: {
+    async feed(parent, args, context, info) {
+      const where = args.filter
+        ? {
+            OR: [
+              { description: { contains: args.filter } },
+              { url: { contains: args.filter } },
+            ],
+          }
+        : {};
+
+      const links = await context.prisma.link.findMany({
+        where,
+        skip: args.skip,
+        take: args.take,
+        orderBy: args.orderBy,
+      });
+
+      const count = await context.prisma.link.count({ where });
+
+      return {
+        id: 'main-feed',
+        links,
+        count,
+      };
     },
-};
+  },
+});

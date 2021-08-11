@@ -1,48 +1,48 @@
-const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+import { registerResolvers, registerTypeDefs, gql } from '../app';
+import { sleep } from '../utils';
 
-import { gql } from '@graphql-ez/plugin-schema';
+registerTypeDefs(gql`
+  type Link {
+    id: ID!
+    description: String!
+    url: String!
+    postedBy: User
+    createdAt: DateTime!
+  }
 
-export const typeDefs = gql`
-    type Link {
-      id: ID!
-      description: String!
-      url: String!
-      postedBy: User
-      createdAt: DateTime!
-    }
+  type Subscription {
+    newLink: Link
+    hello: String!
+  }
 
-    type Subscription {
-      newLink: Link
-      hello: String!
-    }
+  extend type Mutation {
+    post(url: String!, description: String!): Link!
+  }
+`);
 
-    extend type Mutation {
-      post(url: String!, description: String!): Link!
-    }
-`;
-
-export const resolvers = {
+registerResolvers({
   Mutation: {
     async post(parent, args, context, info) {
       const { userId } = context;
-    
+
+      if (!userId) throw Error('User could not be found!');
+
       const newLink = await context.prisma.link.create({
         data: {
           url: args.url,
           description: args.description,
-          postedBy: { connect: { id: userId } }
-        }
+          postedBy: { connect: { id: userId } },
+        },
       });
 
       console.log('Publishing new link:::', newLink);
 
       await context.pubsub.publish('NEW_LINK', {
-        newLink: newLink
+        newLink: newLink,
       });
-    
+
       return newLink;
-    }
-    
+    },
   },
   Subscription: {
     hello: {
@@ -62,16 +62,18 @@ export const resolvers = {
     newLink: {
       async subscribe(_root, _args, context) {
         // console.log('Val::', await context.pubsub.asyncIterator("NEW_LINK").next());
-        const newVal = await (await context.pubsub.asyncIterator("NEW_LINK").next()).value;
+        const newVal = await (
+          await context.pubsub.asyncIterator('NEW_LINK').next()
+        ).value;
         console.log('newVal::', newVal);
         return newVal;
       },
-    }
+    },
     // newLink: {
     //   subscribe: (parent, args, context, info) => {
     //     // console.log('iterator::', context.pubsub.asyncIterator("NEW_LINK"));
     //     return context.pubsub.asyncIterator("NEW_LINK");
     //   }
     // }
-  }
-};
+  },
+});
