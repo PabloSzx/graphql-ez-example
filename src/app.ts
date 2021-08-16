@@ -1,6 +1,7 @@
 import { PubSub } from 'graphql-subscriptions';
 
 import { BuildContextArgs, CreateApp, InferContext } from '@graphql-ez/fastify';
+import { ezCodegen } from '@graphql-ez/plugin-codegen';
 import { ezGraphiQLIDE } from '@graphql-ez/plugin-graphiql';
 import { ezScalars } from '@graphql-ez/plugin-scalars';
 import { ezSchema } from '@graphql-ez/plugin-schema';
@@ -50,6 +51,13 @@ export const ezApp = CreateApp({
         DateTime: 1,
       }),
       ezWebSockets('adaptive'),
+      ezCodegen({
+        config: {
+          scalars: {
+            ID: 'number',
+          },
+        },
+      }),
     ],
   },
   async prepare() {

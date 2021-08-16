@@ -37,9 +37,15 @@ registerResolvers({
 
       const links = await context.prisma.link.findMany({
         where,
-        skip: args.skip,
-        take: args.take,
-        orderBy: args.orderBy,
+        skip: args.skip ?? undefined,
+        take: args.take ?? undefined,
+        orderBy: args.orderBy
+          ? {
+              description: args.orderBy.description ?? undefined,
+              url: args.orderBy.url ?? undefined,
+              createdAt: args.orderBy.createdAt ?? undefined,
+            }
+          : undefined,
       });
 
       const count = await context.prisma.link.count({ where });

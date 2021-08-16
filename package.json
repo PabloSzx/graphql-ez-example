@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@graphql-ez/fastify": "^0.8.2",
+    "@graphql-ez/plugin-codegen": "^0.6.2",
     "@graphql-ez/plugin-graphiql": "^0.5.0",
     "@graphql-ez/plugin-scalars": "^0.6.2",
     "@graphql-ez/plugin-schema": "^0.4.1",

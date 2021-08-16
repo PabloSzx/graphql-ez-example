@@ -66,14 +66,22 @@ registerResolvers({
   },
   Vote: {
     async link(parent, args, context) {
-      return context.prisma.vote
+      const link = await context.prisma.vote
         .findUnique({ where: { id: parent.id } })
-        .link();
+        .link({});
+
+      if (!link) throw Error('Link of ' + parent.id + ' could not be found!');
+
+      return link;
     },
     async user(parent, args, context) {
-      return context.prisma.vote
+      const user = await context.prisma.vote
         .findUnique({ where: { id: parent.id } })
         .user();
+
+      if (!user) throw Error('User of ' + parent.id + ' could not be found!');
+
+      return user;
     },
   },
 });
