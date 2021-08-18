@@ -4,19 +4,20 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "dev": "rimraf dist && tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
     "pretty": "prettier -w \"**/*.{ts,json}\"",
-    "start": "tsc && node ./dist/index.js"
+    "start": "tsc && node ./dist/index.js",
+    "prepare": "prisma generate"
   },
   "dependencies": {
     "@graphql-ez/fastify": "^0.8.2",
     "@graphql-ez/plugin-graphiql": "^0.5.0",
-    "@graphql-ez/plugin-scalars": "^0.6.2",
-    "@graphql-ez/plugin-schema": "^0.4.1",
+    "@graphql-ez/plugin-scalars": "^0.6.3",
+    "@graphql-ez/plugin-schema": "^0.5.0",
     "@graphql-ez/plugin-websockets": "^0.7.0",
-    "@prisma/client": "^2.29.0",
+    "@prisma/client": "^2.29.1",
     "bcryptjs": "^2.4.3",
-    "fastify": "^3.20.1",
+    "fastify": "^3.20.2",
     "graphql": "^15.5.1",
     "graphql-ez": "^0.11.0",
     "graphql-subscriptions": "^1.2.1",
@@ -26,14 +27,13 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/concurrently": "^6.2.1",
     "@types/jsonwebtoken": "^8.5.4",
-    "@types/node": "^16.6.0",
+    "@types/node": "^16.6.1",
     "@types/nodemon": "^1.19.1",
     "@types/rimraf": "^3.0.1",
     "concurrently": "^6.2.1",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2",
-    "prisma": "^2.29.0",
-    "rimraf": "^3.0.2",
+    "prisma": "^2.29.1",
     "tsc-watch": "^4.4.0",
     "typescript": "^4.3.5"
   }
